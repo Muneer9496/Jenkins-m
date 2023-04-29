@@ -10,15 +10,25 @@ pipeline {
 
         stage('Terraform Destroy Databases') {
             steps {
-                        git branch: 'main', url: 'https://github.com/Muneer9496/terraform-databases.git'
+                        git branch: 'main', url: 'https://github.com/b53-clouddevops/terraform-databases.git'
                         sh "terrafile -f env-${ENV}/Terrafile"
                         sh "terraform init --backend-config=env-${ENV}/${ENV}-backend.tfvars -reconfigure"
                         sh "terraform destroy -var-file=env-${ENV}/${ENV}.tfvars -auto-approve"
                     }
                 } 
+
+        stage('Terraform Destroy ALB') {
+            steps {
+                git branch: 'main', url: 'https://github.com/b53-clouddevops/terraform-loadbalancers.git'
+                        sh "terrafile -f env-${ENV}/Terrafile"
+                        sh "terraform init --backend-config=env-${ENV}/${ENV}-backend.tfvars -reconfigure"
+                        sh "terraform destroy -var-file=env-${ENV}/${ENV}.tfvars -auto-approve"
+                }
+            }
+
         stage('Terraform Destroy Network') {
             steps {
-                git branch: 'main', url: 'https://github.com/Muneer9496/terraform-vpc.git'
+                git branch: 'main', url: 'https://github.com/b53-clouddevops/terraform-vpc.git'
                         sh "terrafile -f env-${ENV}/Terrafile"
                         sh "terraform init --backend-config=env-${ENV}/${ENV}-backend.tfvars -reconfigure"
                         sh "terraform destroy -var-file=env-${ENV}/${ENV}.tfvars -auto-approve"
